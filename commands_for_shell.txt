@@ -1,0 +1,52 @@
+from news_portal.models import Author, Category, Post, PostCategory, Comment
+from django.contrib.auth.models import User
+# Task 1
+user_1 = User.objects.create_user('user1')
+user_2 = User.objects.create_user('user2’)
+# Task 2
+author_1 = Author.objects.create(user=user_1)
+author_2 = Author.objects.create(user=user_2)
+# Task 3
+category_1 = Category.objects.create(category_name='category1')
+category_2 = Category.objects.create(category_name='category2')
+category_3 = Category.objects.create(category_name='category3')
+category_4 = Category.objects.create(category_name='category4')
+# Task 4
+post_1 = Post.objects.create(is_post_type_news=False, author=author_1, title="post1", text="This post 1 author 1")
+post_2 = Post.objects.create(is_post_type_news=False, author=author_2, title="post2", text="This post 2 author 2")
+post_3 = Post.objects.create(is_post_type_news=True, author=author_1, title="news1", text="This news 1 author 1")
+# Task 5
+post_1.categories.set([category_1, category_2])
+post_2.categories.add(category_3)
+post_3.categories.add(category_4)
+# Task 6
+comment_1 = Comment.objects.create(post=post_1, user=user_1, comment="comment 1 user 1")
+comment_2 = Comment.objects.create(post=post_1, user=user_2, comment="comment 1 user 2")
+comment_3 = Comment.objects.create(post=post_2, user=user_1, comment="comment 2 user 1")
+comment_4 = Comment.objects.create(post=post_3, user=user_2, comment="comment 2 user 2")
+# Task 7
+comment_1.like()
+comment_1.like()
+comment_2.dislike()
+comment_4.dislike()
+post_1.like()
+post_1.like()
+post_3.like()
+post_2.dislike()
+# Task 8
+author_1.update_rating()
+author_2.update_rating()
+# Task 9
+Author.objects.order_by('-rate_user')[:1][0].user.username
+# Task 10
+Post.objects.order_by('-rating')[:1][0].post_date
+Post.objects.order_by('-rating')[:1][0].author.user.username
+Post.objects.order_by('-rating')[:1][0].rating
+Post.objects.order_by('-rating')[:1][0].title
+Post.objects.order_by('-rating')[:1][0].preview()
+# Task 11
+for i in Comment.objects.filter(post=Post.objects.order_by('-rating')[:1][0]):
+    i.day_time
+    i.user.username
+    i.rating
+    i.comment

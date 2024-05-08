@@ -1,0 +1,22 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+<!-- Название у нас будет Product -->
+{% block title %}
+Post
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
+{% block content %}
+<h1>{{post.title}}</h1>
+<h2>{{ post.post_date|date:'d M Y' }}</h2>
+<h3>{{post.author.user.username}}</h3>
+<h4>Rating: {{post.rating}}</h4>
+<p>{{post.text|censor}}</p>
+{% if perms.news_portal.delete_post %}
+<button><a href="/news/post/{{object.pk}}/delete">Delete</a></button>
+{% endif %}
+{% if perms.news_portal.change_post %}
+<button><a href="/news/post/{{object.pk}}/edit">Edit</a></button>
+{% endif %}
+{% endblock content %}
