@@ -37,6 +37,9 @@ class Post(models.Model):
     rating = models.IntegerField(default=0)
     categories = models.ManyToManyField(Category, through="PostCategory")
 
+    def __str__(self):
+        return self.title
+
     def like(self):
         self.rating += 1
         self.save()
@@ -71,3 +74,17 @@ class Comment(models.Model):
     def dislike(self):
         self.rating -= 1
         self.save()
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='subscriptions',
+    )
+    category = models.ForeignKey(
+        to='Category',
+        on_delete=models.CASCADE,
+        related_name='subscriptions',
+    )
+
