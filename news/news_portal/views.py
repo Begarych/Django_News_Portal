@@ -8,7 +8,9 @@ from django.db.models import Exists, OuterRef
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
-
+from django.http import HttpResponse
+from django.views import View
+from .tasks import send_mail_task
 
 class PostList(ListView):
     model = Post
@@ -55,6 +57,7 @@ class CreatePost(PermissionRequiredMixin, CreateView):
     def form_valid(self, form):
         post = form.save(commit=False)
         post.is_post_type_news = False
+        post.save()
         return super().form_valid(form)
 
 
@@ -67,6 +70,8 @@ class CreateNews(PermissionRequiredMixin, CreateView):
     def form_valid(self, form):
         post = form.save(commit=False)
         post.is_post_type_news = True
+        post.save()
+        send_mail_task.delay(post.pk)
         return super().form_valid(form)
 
 
@@ -127,3 +132,5 @@ def subscriptions(request):
         'subscriptions.html',
         {'categories': categories_with_subscriptions},
     )
+
+
